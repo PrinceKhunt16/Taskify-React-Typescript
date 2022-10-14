@@ -12,16 +12,12 @@
   margin: auto;
 }
 
+body {
+  background: #F5EEF8;
+}
+
 ::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #ececec;
-}
-
-::-webkit-scrollbar-track {
-  background: #f4f4f4;
+  width: 0px;
 }
 
 .app {
@@ -30,8 +26,8 @@
 
 .headerAndInput {
   position: sticky;
+  background: #F5EEF8;
   top: 0px;
-  background-color: #fff;
 }
 
 header {
@@ -65,25 +61,54 @@ header h1 {
 }
 
 .inputWrapper input {
+  background: #FADBD8;
+  color: #707070;
   width: 100%;
   height: 50px;
-  color: #707070;
-  font-family: 'Caveat';
-  border: 1px solid #707070;
-  border-radius: 25px;
-  padding-left: 10px;
+  padding-left: 15px;
   font-size: 25px;
+  font-family: 'Caveat';
   outline: none;
+  border: 1px solid #fadbd8;
+  border-radius: 25px;
 }
 
 .inputWrapper input::placeholder {
   color: #707070;
 }
 
-.todos {
-  margin: 5px 15px;
+.containerTodos {
   display: flex;
-  flex-direction: column;
+  margin: 15px;
+  gap: 15px;
+}
+
+.activeTodos {
+  width: 100%;
+  padding: 15px;
+  background-color: #fff7d8;
+  border-radius: 8px;
+  min-height: 170px;
+  margin: 0;
+  height: fit-content;
+}
+
+.completedTodos {
+  width: 100%;
+  padding: 15px;
+  background-color: #D5F5E3;
+  border-radius: 8px;
+  min-height: 170px;
+  margin: 0;
+  height: fit-content;
+}
+
+.activeTodos span,
+.completedTodos span {
+  font-size: 24px;
+  font-family: 'Caveat Brush';
+  font-weight: 300;
+  color: #707070;
 }
 
 .todobox {
@@ -91,12 +116,18 @@ header h1 {
   align-items: center;
   justify-content: space-between;
   padding: 0px 15px;
+  margin-top: 15px;
   margin-bottom: 15px;
   height: 80px;
   width: 100%;
   border-radius: 5px;
-  background: #eeeeee;
-  box-shadow: 2px 2px 5px #dcdcdc;
+  background: #ffcdcd;
+  box-shadow: 3px 3px 5px #70707038;
+  transition: 0.3s all ease-in-out;
+}
+
+.todobox:hover {
+  transform: scale(1.02);
 }
 
 .todobox .name {
@@ -134,7 +165,7 @@ header h1 {
   margin: 0;
 }
 
-.todobox .icons div{
+.todobox .icons div {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -148,4 +179,12 @@ header h1 {
   height: 35px;
   width: 35px;
   cursor: pointer;
+}
+
+.dragactive {
+  background-color: #FCF3CF;
+}
+
+.dragcomplete {
+  background-color: #D4EFDF;
 }
