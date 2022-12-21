@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [name, setName] = useState("")
@@ -64,23 +64,28 @@ const Login = () => {
 
   return (
     <div className="login">
-      <h1>Login</h1>
       <div className="error" style={{ display: dis ? 'block' : 'none' }}>{error && <h1>{error}</h1>}</div>
-      <form onSubmit={submitHandler}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-        />
-        <input disabled={disabled} type="submit" value="Submit" />
-      </form>
+      <div className="content">
+        <h1>Login</h1>
+        <form onSubmit={submitHandler}>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Name"
+            />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            />
+          <input disabled={disabled} type="submit" value="Submit" />
+        </form>
+        <div className="other-link">
+          If you have not account. <Link to={'/register'}>Register</Link>
+        </div>
+      </div>
     </div>
   )
 }
