@@ -21,11 +21,11 @@ const TodoList: FC<TodoListProps> = ({ todos, setTodos, completedTodos, setCompl
                         {...provided.droppableProps}
                     >
                         <div className="heading">Active Task</div>
-                        {todos.map((todo, index) => (
+                        {todos?.map((todo, index) => (
                             <TodoBox
                                 index={index}
                                 todo={todo}
-                                key={todo.id}
+                                key={todo._id}
                                 todos={todos}
                                 setTodos={setTodos}
                             />
@@ -46,7 +46,7 @@ const TodoList: FC<TodoListProps> = ({ todos, setTodos, completedTodos, setCompl
                             <TodoBox
                                 index={index}
                                 todo={todo}
-                                key={todo.id}
+                                key={todo._id}
                                 todos={completedTodos}
                                 setTodos={setCompletedTodos}
                             />

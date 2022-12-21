@@ -1,28 +1,44 @@
-import { useState, FormEvent, FC } from "react";
+import { useState, FormEvent, FC, useEffect } from "react";
 import "../App.css";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { Todo } from "../models/todos";
 import TodoList from "./TodoList";
 import Input from "./Input";
 import Header from "./Header";
+import axios from "axios";
 
 const Home: FC = () => {
   const [todo, setTodo] = useState <string> ('');
   const [todos, setTodos] = useState <Todo[]> ([]);
   const [completedTodos, setCompletedTodos] = useState <Todo[]> ([]);
 
-  const handleAdd = (e: FormEvent) => {
+  const handleAdd = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (todo) {
-      setTodos([...todos, {
-        id: Date.now(),
-        todo: todo,
-        isDone: false
-      }]);
-
-      setTodo('');
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
+
+    const userInfo = localStorage.getItem('userInfo')
+    let uid
+
+    if (typeof userInfo === 'string') {
+      const data = JSON.parse(userInfo)
+      uid = data.uid
+    }
+
+    await axios.post(
+      "/api/tasks/create",
+      {
+        name: todo,
+        user: uid
+      },
+      config
+    )
+
+    setTodo('')
   };
 
   const onDragEnd = (result: DropResult) => {
@@ -55,6 +71,52 @@ const Home: FC = () => {
     setCompletedTodos(complete);
     setTodos(active);
   }
+
+  const fetchTasks = async () => {
+    const userInfo = localStorage.getItem('userInfo')
+    let uid
+
+    if (typeof userInfo === 'string') {
+      const data = JSON.parse(userInfo)
+      uid = data.uid
+    }
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+
+      const { data: activeTasks } = await axios.post(
+        "/api/tasks/active",
+        {
+          id: uid
+        },
+        config
+      )
+
+      setTodos(activeTasks.tasks)
+
+      const { data: completedTasks } = await axios.post(
+        "/api/tasks/completed",
+        {
+          id: uid
+        },
+        config
+      )
+
+      setCompletedTodos(completedTasks.tasks)
+    } catch (e: any) {
+      console.log(e.response.data.message)
+    }
+  }
+
+  useEffect(() => {
+    (async function setDefaultTask() {
+      await fetchTasks()
+    })()
+  }, [todos])
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

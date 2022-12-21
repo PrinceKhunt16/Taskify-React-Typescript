@@ -44,8 +44,26 @@ const updateTask = asyncHandler(async (req, res) => {
   })
 })
 
+const getActiveTask = asyncHandler(async (req, res) => {
+  const tasks = await Task.find({ user: req.body.id, completed: false})
+
+  res.status(200).json({
+    tasks
+  })
+})
+
+const getCompletedTask = asyncHandler(async (req, res) => {
+  const tasks = await Task.find({ user: req.body.id, completed: true})
+
+  res.status(200).json({
+    tasks
+  })
+})
+
 module.exports = {
   createTask,
   deleteTask,
-  updateTask
+  updateTask,
+  getActiveTask,
+  getCompletedTask
 }

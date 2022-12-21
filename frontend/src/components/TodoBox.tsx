@@ -1,6 +1,7 @@
 import { FC, Dispatch, useState, useRef, useEffect, FormEvent, SetStateAction } from "react";
 import { Todo } from "../models/todos";
 import { Draggable } from "react-beautiful-dnd";
+import axios from "axios";
 
 type TodoBoxProps = {
     index: number,
@@ -11,19 +12,30 @@ type TodoBoxProps = {
 
 const TodoBox: FC<TodoBoxProps> = ({ index, todo, todos, setTodos }) => {
     const [edit, setEdit] = useState<boolean>(false);
-    const [editTodo, setEditTodo] = useState<string>(todo.todo);
+    const [editTodo, setEditTodo] = useState<string>(todo.name);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleDelete = (id: number) => {
-        setTodos(todos.filter((todo) => todo.id !== id));
+    const handleDelete = async (id: number) => {      
+        await axios.delete(
+            "/api/tasks/delete", 
+            {
+                data: {
+                    id: id
+                }
+            }            
+        )
     };
 
-    const handleEdit = (e: FormEvent, id: number) => {
+    const handleEdit = async (e: FormEvent, id: number) => {
         e.preventDefault();
 
-        setTodos(todos.map((todo) => (
-            todo.id === id ? { ...todo, todo: editTodo } : todo
-        )));
+        await axios.patch(
+            "/api/tasks/update", 
+            {   
+                id: id,
+                name: editTodo
+            }            
+        )
 
         setEdit(false);
     }
@@ -40,13 +52,13 @@ const TodoBox: FC<TodoBoxProps> = ({ index, todo, todos, setTodos }) => {
 
     return (
         <Draggable 
-            draggableId={todo.id.toString()} 
+            draggableId={todo._id.toString()} 
             index={index}
         >
             {(provided, snapshot) => (
                 <form 
                     className={`todobox ${snapshot.isDragging ? "drag" : ""}`}
-                    onSubmit={(e) => handleEdit(e, todo.id)}
+                    onSubmit={(e) => handleEdit(e, todo._id)}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
@@ -62,13 +74,13 @@ const TodoBox: FC<TodoBoxProps> = ({ index, todo, todos, setTodos }) => {
                             </div>
                         ) : (
                                 <div className="name">
-                                    <h2>{todo.todo}</h2>
+                                    <h2>{todo?.name}</h2>
                                 </div>
                             )
                     }
                     <div className="icons">
                         <div onClick={() => handleTodo()}>EDT</div>
-                        <div onClick={() => handleDelete(todo.id)}>DEL</div>
+                        <div onClick={() => handleDelete(todo._id)}>DEL</div>
                     </div>
                 </form>
             )}
