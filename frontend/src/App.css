@@ -35,14 +35,29 @@ header {
   justify-content: center;
   align-items: center;
   padding: 10px;
+  position: relative;
 }
 
-header h1 {
+.header h1 {
   font-size: 30px;
   font-family: 'Caveat Brush';
   font-weight: 300;
   color: #707070;
   letter-spacing: 0.2px;
+}
+
+.header div {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+}
+
+.header div button {
+  background-color: transparent;
+  border: none;
+  font-size: 22px;
+  font-family: 'Caveat';
+  cursor: pointer;
 }
 
 .inputBox {
@@ -136,6 +151,7 @@ header h1 {
 
 .todobox .name {
   display: flex;
+  flex: 1;
   margin: 0;
 }
 
@@ -144,18 +160,13 @@ header h1 {
   color: #707070;
   font-size: 24px;
   font-weight: 600;
-}
-
-.todobox .name s {
-  font-family: 'Caveat';
-  color: #707070;
-  font-size: 24px;
-  font-weight: 600;
+  width: 100%;
 }
 
 .todobox .name input {
   background-color: transparent;
   border: none;
+  width: 100%;
   outline: none;
   font-family: 'Caveat';
   color: #707070;
@@ -194,3 +205,28 @@ header h1 {
 .dragcomplete {
   background-color: #D4EFDF;
 }
+
+.login, .register {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.login .error,
+.register .error {
+  position: absolute;
+  background-color: #D5F5E3;
+  color: #707070;
+  bottom: 0;
+  right: 0;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 1px;
+}
+
+.login .error h1,
+.register .error h1 {
+  font-size: 16px;
+  font-weight: 400;
+}
+

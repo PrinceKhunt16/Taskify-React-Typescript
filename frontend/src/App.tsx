@@ -1,81 +1,38 @@
-import { useState, FC, FormEvent } from "react";
-import "./App.css";
-import Header from "./components/Header";
-import Input from "./components/Input";
-import TodoList from "./components/TodoList";
-import { Todo } from "./models/todos";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { FC } from "react"
+import "./App.css"
+import Login from "./components/Login"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import Home from "./components/Home"
+import Register from "./components/Register"
+
+interface IProtectedType {
+  children: any
+}
 
 const App: FC = () => {
-  const [todo, setTodo] = useState<string>('');
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [completedTodos, setCompletedTodos] = useState<Todo[]>([]);
+  const ProtectedRoute = ({ children }: IProtectedType) => {
+    const userInfo = localStorage.getItem('userInfo')
 
-  const handleAdd = (e: FormEvent) => {
-    e.preventDefault();
-
-    if (todo) {
-      setTodos([...todos, {
-        id: Date.now(),
-        todo: todo,
-        isDone: false
-      }]);
-
-      setTodo('');
-    }
-  };
-
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
-
-    if(!destination){
-      return;
+    if (!userInfo) {
+      return <Navigate to={'/login'} />
     }
 
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
-      return;
-    }
-
-    let add, active = todos, complete = completedTodos;
-    
-    if(source.droppableId === 'ActiveTodos'){
-      add = active[source.index];
-      active.splice(source.index, 1);
-    } else {
-      add = complete[source.index];
-      complete.splice(source.index, 1);
-    }
-
-    if(destination.droppableId === 'ActiveTodos'){
-      active.splice(destination.index, 0, add);
-    } else {
-      complete.splice(destination.index, 0, add);
-    }
-
-    setCompletedTodos(complete);
-    setTodos(active);
+    return children
   }
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className="app">
-        <div className="headerAndInput">
-          <Header />
-          <Input
-            todo={todo}
-            setTodo={setTodo}
-            handleAdd={handleAdd}
-          />
-        </div>
-        <TodoList
-          todos={todos}
-          setTodos={setTodos}
-          completedTodos={completedTodos}
-          setCompletedTodos={setCompletedTodos}
-        />
-      </div>
-    </DragDropContext>
+    <Router>
+      <Routes>
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   )
 }
 
-export default App;
+export default App

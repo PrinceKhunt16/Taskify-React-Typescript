@@ -9,7 +9,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if(userExists){
     res.status(400)
-    throw new Error('The name should be unique. This name already taken.')
+    throw new Error('The name should be unique.')
   }
 
   const user = await User.create({

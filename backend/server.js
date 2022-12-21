@@ -12,6 +12,8 @@ app.use('/api/users', userRoutes)
 app.use(notFound)
 app.use(errorHandler)
 
-app.listen(process.env.PORT, () => {
+const PORT = process.env.PORT || 4000
+
+app.listen(PORT, () => {
   console.log('Server Running')
 })
