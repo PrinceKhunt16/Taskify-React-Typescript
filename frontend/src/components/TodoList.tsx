@@ -7,10 +7,12 @@ interface TodoListProps {
     todos: Todo[],
     setTodos: (Dispatch<SetStateAction<Array<Todo>>>),
     completedTodos: Todo[],
-    setCompletedTodos: (Dispatch<SetStateAction<Array<Todo>>>)
+    setCompletedTodos: (Dispatch<SetStateAction<Array<Todo>>>),
+    check: boolean,
+    setCheck: (Dispatch<SetStateAction<boolean>>)
 }
 
-const TodoList: FC<TodoListProps> = ({ todos, setTodos, completedTodos, setCompletedTodos }) => {
+const TodoList: FC<TodoListProps> = ({ todos, setTodos, completedTodos, setCompletedTodos, check, setCheck }) => {
     return (
         <div className="containerTodos">
             <Droppable droppableId="ActiveTodos">
@@ -26,8 +28,8 @@ const TodoList: FC<TodoListProps> = ({ todos, setTodos, completedTodos, setCompl
                                 index={index}
                                 todo={todo}
                                 key={todo._id}
-                                todos={todos}
-                                setTodos={setTodos}
+                                check={check}
+                                setCheck={setCheck}
                             />
                         ))}
                         {provided.placeholder}
@@ -47,8 +49,8 @@ const TodoList: FC<TodoListProps> = ({ todos, setTodos, completedTodos, setCompl
                                 index={index}
                                 todo={todo}
                                 key={todo._id}
-                                todos={completedTodos}
-                                setTodos={setCompletedTodos}
+                                check={check}
+                                setCheck={setCheck}
                             />
                         ))}
                         {provided.placeholder}

@@ -1,19 +1,19 @@
-import { FC, Dispatch, useState, useRef, useEffect, FormEvent, SetStateAction } from "react";
-import { Todo } from "../models/todos";
-import { Draggable } from "react-beautiful-dnd";
-import axios from "axios";
+import { FC, Dispatch, useState, useRef, useEffect, FormEvent, SetStateAction } from "react"
+import { Todo } from "../models/todos"
+import { Draggable } from "react-beautiful-dnd"
+import axios from "axios"
 
 type TodoBoxProps = {
     index: number,
     todo: Todo,
-    todos: Todo[],
-    setTodos: (Dispatch<SetStateAction<Array<Todo>>>)
+    check: boolean,
+    setCheck: (Dispatch<SetStateAction<boolean>>)
 }
 
-const TodoBox: FC<TodoBoxProps> = ({ index, todo, todos, setTodos }) => {
-    const [edit, setEdit] = useState<boolean>(false);
-    const [editTodo, setEditTodo] = useState<string>(todo.name);
-    const inputRef = useRef<HTMLInputElement>(null);
+const TodoBox: FC<TodoBoxProps> = ({ index, todo, check, setCheck }) => {
+    const [edit, setEdit] = useState<boolean>(false)
+    const [editTodo, setEditTodo] = useState<string>(todo.name)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const handleDelete = async (id: number) => {      
         await axios.delete(
@@ -24,10 +24,11 @@ const TodoBox: FC<TodoBoxProps> = ({ index, todo, todos, setTodos }) => {
                 }
             }            
         )
-    };
+        setCheck(!check)
+    }
 
     const handleEdit = async (e: FormEvent, id: number) => {
-        e.preventDefault();
+        e.preventDefault()
 
         await axios.patch(
             "/api/tasks/update", 
@@ -37,18 +38,19 @@ const TodoBox: FC<TodoBoxProps> = ({ index, todo, todos, setTodos }) => {
             }            
         )
 
-        setEdit(false);
+        setEdit(false)
+        setCheck(!check)
     }
 
     const handleTodo = () => {
         if (!edit && !todo.isDone) {
-            setEdit(!edit);
+            setEdit(!edit)
         }
     }
 
     useEffect(() => {
-        inputRef.current?.focus();
-    }, [edit]);
+        inputRef.current?.focus()
+    }, [edit])
 
     return (
         <Draggable 
@@ -88,4 +90,4 @@ const TodoBox: FC<TodoBoxProps> = ({ index, todo, todos, setTodos }) => {
     )
 }
 
-export default TodoBox;
+export default TodoBox

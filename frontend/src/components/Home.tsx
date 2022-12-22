@@ -1,19 +1,20 @@
-import { useState, FormEvent, FC, useEffect } from "react";
-import "../App.css";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { Todo } from "../models/todos";
-import TodoList from "./TodoList";
-import Input from "./Input";
-import Header from "./Header";
-import axios from "axios";
+import { useState, FormEvent, FC, useEffect } from "react"
+import "../App.css"
+import { DragDropContext, DropResult } from "react-beautiful-dnd"
+import { Todo } from "../models/todos"
+import TodoList from "./TodoList"
+import Input from "./Input"
+import Header from "./Header"
+import axios from "axios"
 
 const Home: FC = () => {
-  const [todo, setTodo] = useState <string> ('');
-  const [todos, setTodos] = useState <Todo[]> ([]);
-  const [completedTodos, setCompletedTodos] = useState <Todo[]> ([]);
+  const [todo, setTodo] = useState <string> ('')
+  const [todos, setTodos] = useState <Todo[]> ([])
+  const [completedTodos, setCompletedTodos] = useState <Todo[]> ([])
+  const [check, setCheck] = useState <boolean> (false)
 
   const handleAdd = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const config = {
       headers: {
@@ -39,37 +40,55 @@ const Home: FC = () => {
     )
 
     setTodo('')
-  };
+    setCheck(!check)
+  }
 
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
+  const onDragEnd = async (result: DropResult) => {
+    const { destination, source } = result
 
     if (!destination) {
-      return;
+      return
+    }
+
+    if(destination.droppableId === source.droppableId){
+      return
     }
 
     if (destination.droppableId === source.droppableId && destination.index === source.index) {
-      return;
+      return
     }
 
-    let add, active = todos, complete = completedTodos;
+    let add, active = todos, complete = completedTodos
 
     if (source.droppableId === 'ActiveTodos') {
-      add = active[source.index];
-      active.splice(source.index, 1);
+      add = active[source.index]
+      await axios.patch(
+        "/api/tasks/update", 
+        {   
+          id: active[source.index]._id,
+          completed: true
+        }            
+      )
+      active.splice(source.index, 1)
     } else {
-      add = complete[source.index];
-      complete.splice(source.index, 1);
+      add = complete[source.index]
+      await axios.patch(
+        "/api/tasks/update", 
+        {   
+          id: complete[source.index]._id,
+          completed: false
+        }            
+      ) 
+      complete.splice(source.index, 1)
     }
 
     if (destination.droppableId === 'ActiveTodos') {
-      active.splice(destination.index, 0, add);
+      active.splice(destination.index, 0, add)
     } else {
-      complete.splice(destination.index, 0, add);
+      complete.splice(destination.index, 0, add)
     }
 
-    setCompletedTodos(complete);
-    setTodos(active);
+    await fetchTasks()
   }
 
   const fetchTasks = async () => {
@@ -116,7 +135,7 @@ const Home: FC = () => {
     (async function setDefaultTask() {
       await fetchTasks()
     })()
-  }, [todos])
+  }, [check])
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -127,14 +146,16 @@ const Home: FC = () => {
             todo={todo}
             setTodo={setTodo}
             handleAdd={handleAdd}
-            />
+          />
         </div>
         <TodoList
           todos={todos}
           setTodos={setTodos}
           completedTodos={completedTodos}
           setCompletedTodos={setCompletedTodos}
-          />
+          check={check}
+          setCheck={setCheck}
+        />
       </div>
     </DragDropContext>
   )
